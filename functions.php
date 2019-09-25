@@ -17,6 +17,7 @@
     }
   }
   add_action('add_meta_boxes', 'em_custom_theme_post_title_hide_metabox');
+
   function em_custom_theme_post_title_hide_html($post)
   {
   
@@ -97,3 +98,68 @@
       }
           }
   add_action( 'wp_head', 'em_custom_theme_hide_post_title' );
+
+  //add a custom column to quick edit screen
+   function add_post_title_hidden_quick_edit_column($columns){
+    $new_columns = array();
+    $new_columns['post_title_hidden_value'] = 'Post title set';
+    return array_merge($columns, $new_columns);
+ }
+
+ //customise the data for our custom column, it's here we pull in metadata info for each post/page. These will be referred to in a JavaScript file for pre-populating our quick-edit screen
+  function manage_post_title_hidden_quick_edit_column($column_name, $post_id){
+
+    $html = '';
+
+    if($column_name == 'post_title_hidden_value'){
+       $post_title_hidden_value = get_post_meta($post_id, 'post_title_hidden_value', true);
+       $html .= '<div id="post_title_hidden_value' . $post_id . '">';
+       if($post_title_hidden_value == 1){
+          $html .= 'hidden';
+      }
+       if($post_title_hidden_value == 0 || empty($post_title_hidden_value)){
+          $html .= 'shown';
+      }
+      $html .= '</div>';
+  }
+
+    echo $html;
+ }
+ //Display our custom content on the quick-edit interface, no values can be pre-populated (all done in JavaScript)
+  function display_quick_edit_custom($column){
+    $html = '';
+    
+    wp_nonce_field('post_title_hidden_control_meta_box', 'post_title_hidden_control_meta_box_nonce');// adding nonce to meta box.
+    //output post featured checkbox
+    if($column == 'post_title_hidden_value'){
+       $html .= '<fieldset class="inline-edit-col-left clear">';
+       $html .= '<div class="inline-edit-group wp-clearfix">';
+       $html .= '<label class="alignleft" for="enable"><span style="margin-left:5px;width:8rem;margin-right:-2rem;" class="title">Hide Post title?</span>';
+       $html .= '<input type="radio" name="post_title_hidden_value" id="enable" value="1"/>';
+       $html .= '<span class="checkbox-title">Hide title</span></label>';
+       $html .= '<label class="alignleft" for="disable">';
+       $html .= '<input type="radio" name="post_title_hidden_value" id="disable" value="0"/>';
+       $html .= '<span class="checkbox-title">Show title</span></label>';
+       $html .= '</div>';
+       $html .= '</fieldset>';
+    }
+
+
+    echo $html;
+ }
+ 
+  function post_title_hidden_setting_quick_edit(){
+    wp_enqueue_script('quick-edit-script', plugin_dir_url(__FILE__) . 'lib/post_title_hidden_setting_quick_edit.js', array('jquery','inline-edit-post' ));
+ }
+
+
+
+ 
+ 
+   
+    add_action('manage_page_posts_columns', 'add_post_title_hidden_quick_edit_column', 10, 1); //add custom column
+    add_action('manage_post_posts_columns', 'add_post_title_hidden_quick_edit_column', 10, 1); //add custom column
+    add_action('manage_posts_custom_column', 'manage_post_title_hidden_quick_edit_column', 10, 2); //populate column
+    add_action('manage_pages_custom_column', 'manage_post_title_hidden_quick_edit_column', 10, 2); //populate column
+    add_action('quick_edit_custom_box', 'display_quick_edit_custom', 10, 2); 
+    add_action('admin_enqueue_scripts', 'post_title_hidden_setting_quick_edit'); //enqueue admin script (for prepopulting fields with JS)
