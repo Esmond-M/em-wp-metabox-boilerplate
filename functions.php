@@ -145,10 +145,11 @@ if ( !class_exists( 'Em_Wp_Metabox' ) ) {
     wp_enqueue_script('quick-edit-script', plugin_dir_url(__FILE__) . 'lib/post_title_hidden_setting_quick_edit.js', array('jquery','inline-edit-post' ));
  }
     
- } 
  }
  Em_Wp_Metabox::instance();
- //-----------------------end class
+ //-----------------------end class 
+ }
+
 
  function em_custom_theme_post_title_hide_html($post)
  {
