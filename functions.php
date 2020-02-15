@@ -1,10 +1,34 @@
 <?php
 
+if ( !class_exists( 'Em_Wp_Metabox' ) ) {
+  class Em_Wp_Metabox {  //begin class
+  
+   private static $instance;
 
-  //adding meta box for post
-  function em_custom_theme_post_title_hide_metabox()
-  {
-    $screens = ['post'];
+   private function __construct() {
+   
+   add_action( 'add_meta_boxes', array($this, 'em_custom_theme_post_title_hide_metabox') );
+   add_action( 'save_post', array($this, 'em_custom_theme_post_title_hidden_save_metaboxes') );
+   add_action( 'wp_head', array($this, 'em_custom_theme_hide_post_title') );
+   add_action('manage_page_posts_columns', array($this, 'add_post_title_hidden_quick_edit_column'), 10, 1); //add custom column
+   add_action('manage_post_posts_columns', array($this, 'add_post_title_hidden_quick_edit_column'), 10, 1); //add custom column
+   add_action('manage_posts_custom_column', array($this, 'manage_post_title_hidden_quick_edit_column'), 10, 2);  //populate column
+   add_action('manage_pages_custom_column', array($this, 'manage_post_title_hidden_quick_edit_column'), 10, 2);  //populate column
+   add_action('quick_edit_custom_box', array($this, 'display_quick_edit_custom'), 10, 2);
+   add_action( 'admin_enqueue_scripts', array($this, 'post_title_hidden_setting_quick_edit') ); //enqueue admin script (for prepopulting fields with JS)
+    
+  }
+
+  public static function instance() {
+      if (!isset(self::$instance)) {
+         $className = __CLASS__;
+         self::$instance = new $className;
+      }
+      return self::$instance;
+   }
+   //adding meta box for post
+   public function em_custom_theme_post_title_hide_metabox() {
+    $screens = ['post', 'page'];
     foreach ($screens as $screen) {
       add_meta_box(
         'em_metaboxbox_id',           // Unique ID
@@ -16,36 +40,8 @@
       );
     }
   }
-  add_action('add_meta_boxes', 'em_custom_theme_post_title_hide_metabox');
-
-  function em_custom_theme_post_title_hide_html($post)
-  {
   
-    $meta = get_post_meta($post->ID);
-    $post_title_hidden_value = (isset($meta['post_title_hidden_value'][0]) &&  '1' === $meta['post_title_hidden_value'][0]) ? 1 : 0;
-    wp_nonce_field('post_title_hidden_control_meta_box', 'post_title_hidden_control_meta_box_nonce'); // Always add nonce to your meta boxes!
-    ?>
-  <style type="text/css">
-  .post_meta_extras p {
-      margin: 20px;
-  }
-  
-  .post_meta_extras label {
-      display: block;
-      margin-bottom: 10px;
-  }
-  </style>
-  <div class="post_meta_extras">
-      <p>
-          <label>Yes <input type="checkbox" name="post_title_hidden_value" value="1"
-                  <?php checked($post_title_hidden_value, 1); ?> /><?php esc_attr_e('', 'post_title_hidden'); ?></label>
-      </p></div>
-      <?php
-  }
-  
-  function em_custom_theme_post_title_hidden_save_metaboxes($post_id)
-  {
-  
+  public function em_custom_theme_post_title_hidden_save_metaboxes($post_id) {
     /*
        * We need to verify this came from the our screen and with proper authorization,
        * because save_post can be triggered at other times. Add as many nonces, as you
@@ -79,10 +75,8 @@
     $post_title_hidden_value = (isset($_POST['post_title_hidden_value']) && '1' === $_POST['post_title_hidden_value']) ? 1 : 0; // Input var okay.
     update_post_meta($post_id, 'post_title_hidden_value', esc_attr($post_title_hidden_value));
   }
-  
-  add_action('save_post', 'em_custom_theme_post_title_hidden_save_metaboxes');
-  
-  function em_custom_theme_hide_post_title(){
+
+  public function em_custom_theme_hide_post_title() {
       
       $mykey_values = get_post_custom_values( 'post_title_hidden_value' );
       if(isset($mykey_values)){
@@ -97,17 +91,16 @@
     }
       }
           }
-  add_action( 'wp_head', 'em_custom_theme_hide_post_title' );
 
   //add a custom column to quick edit screen
-   function add_post_title_hidden_quick_edit_column($columns){
+   public function add_post_title_hidden_quick_edit_column($columns){
     $new_columns = array();
     $new_columns['post_title_hidden_value'] = 'Post title set';
     return array_merge($columns, $new_columns);
  }
 
  //customise the data for our custom column, it's here we pull in metadata info for each post/page. These will be referred to in a JavaScript file for pre-populating our quick-edit screen
-  function manage_post_title_hidden_quick_edit_column($column_name, $post_id){
+   public function manage_post_title_hidden_quick_edit_column($column_name, $post_id){
 
     $html = '';
 
@@ -126,7 +119,7 @@
     echo $html;
  }
  //Display our custom content on the quick-edit interface, no values can be pre-populated (all done in JavaScript)
-  function display_quick_edit_custom($column){
+   public function display_quick_edit_custom($column){
     $html = '';
     
     wp_nonce_field('post_title_hidden_control_meta_box', 'post_title_hidden_control_meta_box_nonce');// adding nonce to meta box.
@@ -148,18 +141,36 @@
     echo $html;
  }
  
-  function post_title_hidden_setting_quick_edit(){
+   public function post_title_hidden_setting_quick_edit(){
     wp_enqueue_script('quick-edit-script', plugin_dir_url(__FILE__) . 'lib/post_title_hidden_setting_quick_edit.js', array('jquery','inline-edit-post' ));
  }
+    
+ } 
+ }
+ Em_Wp_Metabox::instance();
+ //-----------------------end class
 
-
-
+ function em_custom_theme_post_title_hide_html($post)
+ {
  
+   $meta = get_post_meta($post->ID);
+   $post_title_hidden_value = (isset($meta['post_title_hidden_value'][0]) &&  '1' === $meta['post_title_hidden_value'][0]) ? 1 : 0;
+   wp_nonce_field('post_title_hidden_control_meta_box', 'post_title_hidden_control_meta_box_nonce'); // Always add nonce to your meta boxes!
+   ?>
+ <style type="text/css">
+ .post_meta_extras p {
+     margin: 20px;
+ }
  
-   
-    add_action('manage_page_posts_columns', 'add_post_title_hidden_quick_edit_column', 10, 1); //add custom column
-    add_action('manage_post_posts_columns', 'add_post_title_hidden_quick_edit_column', 10, 1); //add custom column
-    add_action('manage_posts_custom_column', 'manage_post_title_hidden_quick_edit_column', 10, 2); //populate column
-    add_action('manage_pages_custom_column', 'manage_post_title_hidden_quick_edit_column', 10, 2); //populate column
-    add_action('quick_edit_custom_box', 'display_quick_edit_custom', 10, 2); 
-    add_action('admin_enqueue_scripts', 'post_title_hidden_setting_quick_edit'); //enqueue admin script (for prepopulting fields with JS)
+ .post_meta_extras label {
+     display: block;
+     margin-bottom: 10px;
+ }
+ </style>
+ <div class="post_meta_extras">
+     <p>
+         <label>Yes <input type="checkbox" name="post_title_hidden_value" value="1"
+                 <?php checked($post_title_hidden_value, 1); ?> /><?php esc_attr_e('', 'post_title_hidden'); ?></label>
+     </p></div>
+     <?php
+ }
