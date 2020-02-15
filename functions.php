@@ -1,7 +1,7 @@
 <?php
 
-if ( !class_exists( 'Em_Wp_Metabox' ) ) {
-  class Em_Wp_Metabox {  //begin class
+if ( !class_exists( 'Em_Wp_Metabox_Boilerplate' ) ) {
+  class Em_Wp_Metabox_Boilerplate {  //begin class
   
    private static $instance;
 
@@ -27,7 +27,7 @@ if ( !class_exists( 'Em_Wp_Metabox' ) ) {
       return self::$instance;
    }
    //adding meta box for post
-   public function em_custom_theme_post_title_hide_metabox() {
+  public function em_custom_theme_post_title_hide_metabox() {
     $screens = ['post', 'page'];
     foreach ($screens as $screen) {
       add_meta_box(
@@ -93,14 +93,14 @@ if ( !class_exists( 'Em_Wp_Metabox' ) ) {
           }
 
   //add a custom column to quick edit screen
-   public function add_post_title_hidden_quick_edit_column($columns){
-    $new_columns = array();
-    $new_columns['post_title_hidden_value'] = 'Post title set';
-    return array_merge($columns, $new_columns);
+  public function add_post_title_hidden_quick_edit_column($columns){
+   $new_columns = array();
+   $new_columns['post_title_hidden_value'] = 'Post title set';
+   return array_merge($columns, $new_columns);
  }
 
  //customise the data for our custom column, it's here we pull in metadata info for each post/page. These will be referred to in a JavaScript file for pre-populating our quick-edit screen
-   public function manage_post_title_hidden_quick_edit_column($column_name, $post_id){
+ public function manage_post_title_hidden_quick_edit_column($column_name, $post_id){
 
     $html = '';
 
@@ -116,40 +116,39 @@ if ( !class_exists( 'Em_Wp_Metabox' ) ) {
       $html .= '</div>';
   }
 
-    echo $html;
+  echo $html;
  }
+
  //Display our custom content on the quick-edit interface, no values can be pre-populated (all done in JavaScript)
-   public function display_quick_edit_custom($column){
-    $html = '';
-    
-    wp_nonce_field('post_title_hidden_control_meta_box', 'post_title_hidden_control_meta_box_nonce');// adding nonce to meta box.
-    //output post featured checkbox
-    if($column == 'post_title_hidden_value'){
-       $html .= '<fieldset class="inline-edit-col-left clear">';
-       $html .= '<div class="inline-edit-group wp-clearfix">';
-       $html .= '<label class="alignleft" for="enable"><span style="margin-left:5px;width:8rem;margin-right:-2rem;" class="title">Hide Post title?</span>';
-       $html .= '<input type="radio" name="post_title_hidden_value" id="enable" value="1"/>';
-       $html .= '<span class="checkbox-title">Hide title</span></label>';
-       $html .= '<label class="alignleft" for="disable">';
-       $html .= '<input type="radio" name="post_title_hidden_value" id="disable" value="0"/>';
-       $html .= '<span class="checkbox-title">Show title</span></label>';
-       $html .= '</div>';
-       $html .= '</fieldset>';
-    }
+ public function display_quick_edit_custom($column){
+  $html = '';
+  
+  wp_nonce_field('post_title_hidden_control_meta_box', 'post_title_hidden_control_meta_box_nonce');// adding nonce to meta box.
+  //output post featured checkbox
+  if($column == 'post_title_hidden_value'){
+     $html .= '<fieldset class="inline-edit-col-left clear">';
+     $html .= '<div class="inline-edit-group wp-clearfix">';
+     $html .= '<label class="alignleft" for="enable"><span style="margin-left:5px;width:8rem;margin-right:-2rem;" class="title">Hide Post title?</span>';
+     $html .= '<input type="radio" name="post_title_hidden_value" id="enable" value="1"/>';
+     $html .= '<span class="checkbox-title">Hide title</span></label>';
+     $html .= '<label class="alignleft" for="disable">';
+     $html .= '<input type="radio" name="post_title_hidden_value" id="disable" value="0"/>';
+     $html .= '<span class="checkbox-title">Show title</span></label>';
+     $html .= '</div>';
+     $html .= '</fieldset>';
+  }
 
-
-    echo $html;
+  echo $html;
  }
  
-   public function post_title_hidden_setting_quick_edit(){
-    wp_enqueue_script('quick-edit-script', plugin_dir_url(__FILE__) . 'lib/post_title_hidden_setting_quick_edit.js', array('jquery','inline-edit-post' ));
+ public function post_title_hidden_setting_quick_edit(){
+   wp_enqueue_script('quick-edit-script', plugin_dir_url(__FILE__) . 'lib/post_title_hidden_setting_quick_edit.js', array('jquery','inline-edit-post' ));
  }
     
  }
- Em_Wp_Metabox::instance();
+ Em_Wp_Metabox_Boilerplate::instance();
  //-----------------------end class 
  }
-
 
  function em_custom_theme_post_title_hide_html($post)
  {
@@ -171,7 +170,9 @@ if ( !class_exists( 'Em_Wp_Metabox' ) ) {
  <div class="post_meta_extras">
      <p>
          <label>Yes <input type="checkbox" name="post_title_hidden_value" value="1"
-                 <?php checked($post_title_hidden_value, 1); ?> /><?php esc_attr_e('', 'post_title_hidden'); ?></label>
-     </p></div>
+         <?php checked($post_title_hidden_value, 1); ?> /><?php esc_attr_e('', 'post_title_hidden'); ?>
+         </label>
+     </p>
+ </div>
      <?php
  }
