@@ -15,7 +15,7 @@ if ( !class_exists( 'Em_Wp_Metabox_Boilerplate' ) ) {
    add_action('manage_posts_custom_column', array($this, 'manage_post_title_hidden_quick_edit_column'), 10, 2);  //populate column
    add_action('manage_pages_custom_column', array($this, 'manage_post_title_hidden_quick_edit_column'), 10, 2);  //populate column
    add_action('quick_edit_custom_box', array($this, 'display_quick_edit_custom'), 10, 2);
-   add_action( 'admin_enqueue_scripts', array($this, 'post_title_hidden_setting_quick_edit') ); //enqueue admin script (for prepopulting fields with JS)
+   add_action( 'admin_enqueue_scripts', array($this, 'post_title_hidden_setting_quick_edit') ); //enqueue admin script (for pre-populating fields with JS)
     
   }
 
@@ -90,7 +90,7 @@ if ( !class_exists( 'Em_Wp_Metabox_Boilerplate' ) ) {
       }
     }
       }
-          }
+  }
 
   //add a custom column to quick edit screen
   public function add_post_title_hidden_quick_edit_column($columns){
