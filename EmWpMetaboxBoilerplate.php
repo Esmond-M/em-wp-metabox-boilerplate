@@ -11,7 +11,7 @@ PHP version 7.3
 @return
  */
 
-
+declare(strict_types=1);
 namespace EmWpMetaboxBoilerplate;
 
 if (!class_exists('EmWpMetaboxBoilerplate')) {
