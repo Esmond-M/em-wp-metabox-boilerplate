@@ -4,7 +4,7 @@
 * [License](#license)
 
 ## Installation
-Download the plugin to your computer in ZIP form, then log in to your WordPress admin area and go to Plugins > Add New to upload and activate.
+Download the plugin to your computer in ZIP form, then login to your WordPress admin area and go to Plugins > Add New to upload and activate.
 ## Requirements
 This plugin requires PHP 7 or higher.
 ## Plugin Usage
