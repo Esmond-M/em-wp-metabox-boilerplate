@@ -25,7 +25,7 @@ namespace EmWpMetaboxBoilerplate;
 */
 defined('ABSPATH') or die();
 
-require plugin_dir_path(__FILE__) . 'EmWpMetaboxBoilerplate.php';
+require plugin_dir_path(__FILE__) . '/includes/classes/EmWpMetaboxBoilerplate.php';
 use EmWpMetaboxBoilerplate\EmWpMetaboxBoilerplate;
 
 new EmWpMetaboxBoilerplate;
