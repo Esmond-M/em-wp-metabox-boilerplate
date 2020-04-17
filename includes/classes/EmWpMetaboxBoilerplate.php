@@ -131,7 +131,10 @@ if (!class_exists('EmWpMetaboxBoilerplate')) {
             </style>
             <div class="post_meta_extras">
                 <p>
-                    <label>Yes <input type="checkbox" name="post_title_hidden_value" value="1"
+                    <label>Yes <input
+                               type="checkbox"
+                               name="post_title_hidden_value"
+                               value="1"
                             <?php checked(
                                 $post_title_hidden_value,
                                 1
@@ -224,7 +227,7 @@ if (!class_exists('EmWpMetaboxBoilerplate')) {
                 foreach ($mykey_values as $key => $value) {
                     if ($value == 1) {
                         echo "<style>
-                        h1.entry-title {
+                        .entry-title {
                           display: none!important;
                         }       
                        </style>";
@@ -325,7 +328,7 @@ if (!class_exists('EmWpMetaboxBoilerplate')) {
             wp_enqueue_script(
                 'quick-edit-script',
                 plugin_dir_url(__FILE__) .
-                 'assets/post_title_hidden_setting_quick_edit.js',
+                 'admin/js/post_title_hidden_setting_quick_edit.js',
                 ['jquery','inline-edit-post']
             );
         }
