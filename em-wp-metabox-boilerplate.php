@@ -24,8 +24,28 @@ namespace EmWpMetaboxBoilerplate;
 * Author URI: https://esmondmccain.com
 */
 defined('ABSPATH') or die();
+/**
+ * Define global constants
 
-require plugin_dir_path(__FILE__) . '/includes/classes/EmWpMetaboxBoilerplate.php';
+ * @param $constant_name
+ * @param $value
+ *
+ * @return array
+ */
+function emWpMetaBoxesConstants($constant_name, $value)
+{
+    $constant_name_prefix = 'EM_WP_MetaBoxes_Constants_';
+    $constant_name = $constant_name_prefix . $constant_name;
+    if (!defined($constant_name))
+        define($constant_name, $value);
+}
+emWpMetaBoxesConstants('DIR', dirname(plugin_basename(__FILE__)));
+emWpMetaBoxesConstants('BASE', plugin_basename(__FILE__));
+emWpMetaBoxesConstants('URL', plugin_dir_url(__FILE__));
+emWpMetaBoxesConstants('PATH', plugin_dir_path(__FILE__));
+emWpMetaBoxesConstants('SLUG', dirname(plugin_basename(__FILE__)));
+require  EM_WP_MetaBoxes_Constants_PATH
+    . 'includes/classes/EmWpMetaboxBoilerplate.php';
 use EmWpMetaboxBoilerplate\EmWpMetaboxBoilerplate;
 
 new EmWpMetaboxBoilerplate;

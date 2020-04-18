@@ -327,7 +327,7 @@ if (!class_exists('EmWpMetaboxBoilerplate')) {
         {
             wp_enqueue_script(
                 'quick-edit-script',
-                plugin_dir_url(__FILE__) .
+                EM_WP_MetaBoxes_Constants_URL .
                  'admin/js/post_title_hidden_setting_quick_edit.js',
                 ['jquery','inline-edit-post']
             );
